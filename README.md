@@ -1,4 +1,4 @@
-# Supabase Automation Tool
+# Automation Tool
 
 A Python automation tool.
 ```
