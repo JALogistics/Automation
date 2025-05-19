@@ -3,12 +3,12 @@ import time
 
 # List of scripts to run
 scripts = [
-    'src/tasks/daily-data-transfer.py',
-    'src/tasks/create-consolidated-report.py',
-    'src/tasks/logistics-report.py',
-    'src/tasks/bmo-report.py',
-    'src/tasks/mail-for-bmo-reporting.py',
-    'src/tasks/mail-for-logisitcs-reporting.py'
+    'src/DDP_Tasks/daily-data-transfer.py',
+    'src/DDP_Tasks/create-consolidated-report.py',
+    'src/DDP_Tasks/logistics-report.py',
+    'src/DDP_Tasks/bmo-report.py',
+    'src/DDP_Tasks/mail-for-bmo-reporting.py',
+    'src/DDP_Tasks/mail-for-logisitcs-reporting.py'
 ]
 
 for i, script in enumerate(scripts):
