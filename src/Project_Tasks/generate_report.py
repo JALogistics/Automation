@@ -1,5 +1,7 @@
 import os
 import pandas as pd
+from openpyxl import load_workbook
+from openpyxl.styles import Font, PatternFill
 
 def generate_project_reports():
     # File paths
@@ -108,6 +110,23 @@ def generate_project_reports():
             filtered = filtered[final_columns]
             output_path = os.path.join(output_dir, f"{ref1}.xlsx")
             filtered.to_excel(output_path, index=False)
+            # Format only specific header columns: bold and yellow fill
+            highlight_columns = [
+                "Inbound_Date",
+                "Planned_Delivery Date",
+                "Actual_Delivery Date",
+                "POD sent (Y/N)",
+                "Container_Returned"
+            ]
+            wb = load_workbook(output_path)
+            ws = wb.active
+            header_fill = PatternFill(start_color="FFFF00", end_color="FFFF00", fill_type="solid")
+            header_font = Font(bold=True)
+            for idx, cell in enumerate(ws[1], 1):
+                if cell.value in highlight_columns:
+                    cell.font = header_font
+                    cell.fill = header_fill
+            wb.save(output_path)
     print("Project report generation completed.")
 
 if __name__ == "__main__":
