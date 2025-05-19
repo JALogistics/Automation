@@ -1,6 +1,6 @@
 # Automation Tool
 
-A Python automation tool for connecting to Supabase PostgreSQL databases and fetching table data.
+A Python automation tool.
 
 ## Contributing
 
