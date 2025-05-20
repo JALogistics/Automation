@@ -5,9 +5,9 @@ from openpyxl.styles import Font, PatternFill
 
 def generate_project_reports():
     # File paths
-    file1_path = r"C:\Users\DeepakSureshNidagund\OneDrive - JA Solar GmbH\Project_Reporting\Project_Tracker_List.xlsx"
+    file1_path = r"C:\Users\DeepakSureshNidagund\JA Solar GmbH\Projects - Documents and Tracking\Project Report and Report Genetation\Project_Tracker_List.xlsx"
     file2_dir = r"C:\Users\DeepakSureshNidagund\OneDrive - JA Solar GmbH\Documents - Sales Dashboards (BI Solution)\Z_Factory_Shipment_Report"
-    output_dir = r"C:\Users\DeepakSureshNidagund\OneDrive - JA Solar GmbH\Project_Reporting\output"
+    output_dir = r"C:\Users\DeepakSureshNidagund\JA Solar GmbH\Projects - Documents and Tracking\Project Report and Report Genetation\Generated Reports"
 
     # Ensure output directory exists
     os.makedirs(output_dir, exist_ok=True)
@@ -94,6 +94,7 @@ def generate_project_reports():
                 "POD sent (Y/N)": "POD sent Y/N",
                 "Container_Returned": "Container Returned",
                 "Container_Returned date": "Container Returned date",
+                "Damgage Claim": "Damgage Container Status",
                 "Remark/Comments": "Remark"
             }
             # Prepare the final DataFrame
@@ -116,7 +117,8 @@ def generate_project_reports():
                 "Planned_Delivery Date",
                 "Actual_Delivery Date",
                 "POD sent (Y/N)",
-                "Container_Returned"
+                "Container_Returned",
+                "Damgage Container Status"
             ]
             wb = load_workbook(output_path)
             ws = wb.active
