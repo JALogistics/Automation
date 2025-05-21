@@ -7,7 +7,7 @@ def generate_project_reports():
     # File paths
     file1_path = r"C:\Users\DeepakSureshNidagund\JA Solar GmbH\Projects - Documents and Tracking\Project Report and Report Genetation\Project_Tracker_List.xlsx"
     file2_dir = r"C:\Users\DeepakSureshNidagund\OneDrive - JA Solar GmbH\Documents - Sales Dashboards (BI Solution)\Z_Factory_Shipment_Report"
-    output_dir = r"C:\Users\DeepakSureshNidagund\JA Solar GmbH\Projects - Documents and Tracking\Project Report and Report Genetation\Generated Reports"
+    output_dir = r"C:\Users\DeepakSureshNidagund\JA Solar GmbH\Projects - Documents and Tracking\Project Report and Report Genetation\Generated Reports\Pre-files"
 
     # Ensure output directory exists
     os.makedirs(output_dir, exist_ok=True)
