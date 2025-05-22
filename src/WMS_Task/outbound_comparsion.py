@@ -8,8 +8,9 @@ def get_latest_excel_file(folder_path):
     """
     Get the latest Excel file from the specified folder
     """
-    # Create a pattern to match .xlsx files
+    # Create a pattern to match .xlsx files or .csv files
     pattern = os.path.join(folder_path, '*.xlsx')
+
     
     # Get all Excel files in the directory
     excel_files = glob.glob(pattern)
@@ -37,13 +38,15 @@ def get_wms_data():
             
             # Group by Ref1 and sum Quantity
             wms_summary = wms_df.groupby('Ref1')['Quantity'].sum().reset_index()
-            wms_summary = wms_summary.rename(columns={'Quantity': 'OutboundPcs_wms'})
+            wms_summary = wms_summary.rename(columns={'Quantity': 'Outbound_Pcs_wms'})
             
             return wms_summary
         except Exception as e:
             print(f"Error processing WMS file: {str(e)}")
             return None
     return None
+
+
 
 def process_excel_file(file_path):
     """
@@ -62,14 +65,16 @@ def process_excel_file(file_path):
             # Merge WMS quantity with main dataframe
             df = pd.merge(df, wms_summary, on='Ref1', how='left')
             # Fill NaN values with 0 for Pcs_wms column
-            df['OutboundPcs_wms'] = df['OutboundPcs_wms'].fillna(0)
+            df['Outbound_Pcs_wms'] = df['Outbound_Pcs_wms'].fillna(0)
         else:
             # If WMS data is not available, add empty Pcs_wms column
-            df['OutboundPcs_wms'] = 0
+            df['Outbound_Pcs_wms'] = 0
             print("Warning: WMS data could not be processed. Adding Pcs_wms column with zeros.")
         
+        
         # Add Case_1 column comparing Piece with Pcs_wms
-        df['Case_1'] = np.where(df['Piece'] == df['OutboundPcs_wms'], True, False)
+        df['Case_1'] = np.where(df['Piece'] == df['Outbound_Pcs_wms'], True, False)
+
         
         # Get all column indices
         all_columns = list(range(len(df.columns)))
@@ -85,7 +90,7 @@ def process_excel_file(file_path):
         
         # Reorder columns to put Ref1 at the beginning and Pcs_wms, Case_1 at the end
         cols = df_transformed.columns.tolist()
-        cols = ['Ref1'] + [col for col in cols if col not in ['Ref1', 'OutboundPcs_wms', 'Case_1']] + ['OutboundPcs_wms', 'Case_1']
+        cols = ['Ref1'] + [col for col in cols if col not in ['Ref1', 'Outbound_Pcs_wms', 'Case_1']] + ['Outbound_Pcs_wms', 'Case_1']
         df_transformed = df_transformed[cols]
         
         # Define output directory and create if it doesn't exist

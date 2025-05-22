@@ -38,10 +38,6 @@ def process_excel_file(file_path):
             engine='openpyxl'
         )
         
-        # Clean special characters from Release number and Container number
-        df['Release number'] = df['Release number'].astype(str).str.replace(r'[^a-zA-Z0-9]', '', regex=True)
-        df['Container number'] = df['Container number'].astype(str).str.replace(r'[^a-zA-Z0-9]', '', regex=True)
-        
         # Add Ref1 column by concatenating Release number and Container number
         df['Ref1'] = df['Release number'].astype(str) + df['Container number'].astype(str)
         
