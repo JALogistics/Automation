@@ -48,6 +48,9 @@ def combine_outbound_wms_files():
                 
             # Add source filename as a column for tracking
             df['Source_File'] = os.path.basename(file)
+
+            # Create new Ref1 column by combining Release Number and Container No.
+            df['Ref1'] = df['Release number'].astype(str) + df['Container number'].astype(str)
             
             # Append to our list of dataframes
             all_dfs.append(df)
