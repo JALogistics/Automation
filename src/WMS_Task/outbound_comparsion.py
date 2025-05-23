@@ -47,7 +47,6 @@ def get_wms_data():
     return None
 
 
-
 def process_excel_file(file_path):
     """
     Read and process the Excel file
@@ -70,7 +69,7 @@ def process_excel_file(file_path):
             # If WMS data is not available, add empty Pcs_wms column
             df['Outbound_Pcs_wms'] = 0
             print("Warning: WMS data could not be processed. Adding Pcs_wms column with zeros.")
-        
+
         
         # Add Case_1 column comparing Piece with Pcs_wms
         df['Case_1'] = np.where(df['Piece'] == df['Outbound_Pcs_wms'], True, False)
