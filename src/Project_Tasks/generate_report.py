@@ -81,8 +81,8 @@ def generate_project_reports():
                 "B/L_no": "BL no.",
                 "Destination_Country": "Destination Country",
                 "Destination_Port": "Destination Port",
-                "Free_DM_days": "Free DM days",
-                "Free_DT_days": "Free DT days",
+                "Terminal Storage free days": "Terminal Storage free days",
+                "Free_DM+DT days": "Free_DM+DT days",
                 "Custom_Clearance_Date": "Custom Clearance Date",
                 "Custom_Clearance_No": "Custom Clearance No",
                 "Departure_Date ( From Port)": "Departure Date ( From Port)",
@@ -93,7 +93,6 @@ def generate_project_reports():
                 "Actual_Delivery Date": "Actual Delivery Date",
                 "POD sent (Y/N)": "POD sent Y/N",
                 "Container_Returned": "Container Returned",
-                "Container_Returned date": "Container Returned date",
                 "Damgage Claim": "Damgage Container Status",
                 "Remark/Comments": "Remark"
             }
@@ -114,6 +113,7 @@ def generate_project_reports():
             # Format only specific header columns: bold and yellow fill
             highlight_columns = [
                 "Inbound_Date",
+                "Terminal Storage free days",
                 "Planned_Delivery Date",
                 "Actual_Delivery Date",
                 "POD sent (Y/N)",
