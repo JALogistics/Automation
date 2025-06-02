@@ -52,7 +52,7 @@ def clean_and_prepare_data(df):
             'Storage duration（days）', 'original WH', 'Warehouse after transfer', 'ETD month',
             'Sold month', 'outbound quantity', 'Rest quantity', 'Released on the sea',
             'Booking No.', 'EWX Week', 'Type.2', 'Auxiliary column', 'Inv&type', '是否签收',
-            '型号', 'Unnamed: 65', 'Unnamed: 66', 'Unnamed: 67', 'Unnamed: 68', 'Unnamed: 69'
+            '型号', 'LRF', 'Unnamed: 66', 'Unnamed: 67', 'Unnamed: 68', 'Unnamed: 69','Unnamed: 70', 'Unnamed: 71'
         ]
         df = df.drop(columns=columns_to_remove, errors='ignore')
 
@@ -342,9 +342,11 @@ def save_to_excel(rno, output_path):
             book = openpyxl.load_workbook(output_path)
             sheet = book['RNO Report']
             
-            # Delete all rows except header
-            while sheet.max_row > 1:
-                sheet.delete_rows(2)
+            # Clear cell contents while preserving the header row
+            for row in range(2, sheet.max_row + 1):
+                for col in range(1, 52):  # Columns 1 to 51
+                    cell = sheet.cell(row=row, column=col)
+                    cell.value = None
             
             book.save(output_path)
             book.close()
@@ -369,7 +371,7 @@ def main():
         europe_stock_path = r"C:\Users\DeepakSureshNidagund\OneDrive - JA Solar GmbH\Documents - Sales Dashboards (BI Solution)\Y_EU Report\Europe Stock 最新版.xlsx"
         cdr_reports_dir = r"C:\Users\DeepakSureshNidagund\OneDrive - JA Solar GmbH\Logistics Reporting\000_Master_Query_Reports\Automation_DB\CDR_Reports"
         wms_reports_dir = r"C:\Users\DeepakSureshNidagund\OneDrive - JA Solar GmbH\Documents - Sales Dashboards (BI Solution)\a_Combinded WM_Report\Outbound_WMS_Report"
-        remove_data_path = r"C:\Users\DeepakSureshNidagund\Downloads\Reporting Application\Automation\automation\tests\Remove_data.xlsx"
+        remove_data_path = r"C:\Users\DeepakSureshNidagund\OneDrive - JA Solar GmbH\Logistics Reporting\000_Master_Query_Reports\Automation_DB\RNO_Report\Remove_data(RNO).xlsx"
         output_path = r"C:\Users\DeepakSureshNidagund\OneDrive - JA Solar GmbH\Logistics Reporting\000_Master_Query_Reports\Automation_DB\RNO_Report\RNO_Report.xlsx"
 
         # Load and process data
