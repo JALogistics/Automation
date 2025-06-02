@@ -355,7 +355,7 @@ def save_to_excel(rno, output_path):
             with pd.ExcelWriter(output_path, engine='openpyxl', mode='a', 
                               if_sheet_exists='overlay') as writer:
                 rno.to_excel(writer, sheet_name='RNO Report', index=False, 
-                           header=False, startrow=1)
+                           header=True, startrow=1)
         else:
             rno.to_excel(output_path, sheet_name='RNO Report', index=False)
 
