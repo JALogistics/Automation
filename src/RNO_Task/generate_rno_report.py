@@ -6,6 +6,19 @@ from datetime import datetime
 import openpyxl
 from pathlib import Path
 
+# def load_europe_stock_data(file_path):
+#     """
+#     Load and process the Europe Stock data from Excel file.
+#     """
+#     try:
+#         if not os.path.exists(file_path):
+#             raise FileNotFoundError(f"Excel file not found at: {file_path}")
+            
+#         df = pd.read_excel(file_path, sheet_name="Summary-Europe")
+#         return df
+#     except Exception as e:
+#         print(f"An error occurred while loading Europe stock data: {e}")
+#         return None
 def load_europe_stock_data(file_path):
     """
     Load and process the Europe Stock data from Excel file.
@@ -13,8 +26,24 @@ def load_europe_stock_data(file_path):
     try:
         if not os.path.exists(file_path):
             raise FileNotFoundError(f"Excel file not found at: {file_path}")
+        
+        # Add error handling for dates
+        excel_options = {
+            'sheet_name': "Summary-Europe",
+            'na_values': ['#N/A', '#N/A N/A', '#NA', '-1.#IND', '-1.#QNAN', 
+                         'N/A', 'n/a', 'NA', '<NA>', '#VALUE!'],
+            'keep_default_na': True,
+            'dtype': {'Sold Date': 'object'}  # Read date columns as object first
+        }
             
-        df = pd.read_excel(file_path, sheet_name="Summary-Europe")
+        df = pd.read_excel(file_path, **excel_options)
+        
+        # Convert known date columns to datetime with error handling
+        date_columns = ['Sold Date']  # Add other date columns if needed
+        for col in date_columns:
+            if col in df.columns:
+                df[col] = pd.to_datetime(df[col], errors='coerce')
+        
         return df
     except Exception as e:
         print(f"An error occurred while loading Europe stock data: {e}")
@@ -87,6 +116,40 @@ def split_released_data(df):
         print(f"An error occurred while splitting data: {e}")
         return None, None
 
+# def load_cdr_data(reports_dir):
+#     """
+#     Load the latest CDR report data.
+#     """
+#     try:
+#         if not os.path.exists(reports_dir):
+#             os.makedirs(reports_dir, exist_ok=True)
+
+#         patterns = ["CDR_*.csv", "*CDR*.csv", "*.csv"]
+#         report_files = []
+        
+#         for pattern in patterns:
+#             full_pattern = os.path.join(reports_dir, pattern)
+#             found_files = glob.glob(full_pattern)
+#             if found_files:
+#                 report_files = found_files
+#                 break
+
+#         if not report_files:
+#             raise FileNotFoundError(f"No CSV files found in {reports_dir}")
+
+#         try:
+#             latest_file = max(report_files, key=lambda x: 
+#                             datetime.strptime(os.path.basename(x).split('_')[1].split('.')[0], 
+#                                             "%Y-%m-%d"))
+#         except (IndexError, ValueError):
+#             latest_file = max(report_files, key=os.path.getmtime)
+
+#         cdr = pd.read_csv(latest_file)
+#         return cdr
+#     except Exception as e:
+#         print(f"An error occurred while loading CDR data: {e}")
+#         return None
+
 def load_cdr_data(reports_dir):
     """
     Load the latest CDR report data.
@@ -115,11 +178,13 @@ def load_cdr_data(reports_dir):
         except (IndexError, ValueError):
             latest_file = max(report_files, key=os.path.getmtime)
 
-        cdr = pd.read_csv(latest_file)
+        # Add low_memory=False to prevent the DtypeWarning
+        cdr = pd.read_csv(latest_file, low_memory=False)
         return cdr
     except Exception as e:
         print(f"An error occurred while loading CDR data: {e}")
         return None
+
 
 def process_rno_data(Released_data, cdr):
     """
@@ -357,7 +422,8 @@ def save_to_excel(rno, output_path):
                 rno.to_excel(writer, sheet_name='RNO Report', index=False, 
                            header=True, startrow=1)
         else:
-            rno.to_excel(output_path, sheet_name='RNO Report', index=False)
+            rno.to_excel(output_path, sheet_name='RNO Report', index=False,
+                           header=True)
 
     except Exception as e:
         print(f"An error occurred while saving to Excel: {e}")
@@ -372,7 +438,7 @@ def main():
         cdr_reports_dir = r"C:\Users\DeepakSureshNidagund\OneDrive - JA Solar GmbH\Logistics Reporting\000_Master_Query_Reports\Automation_DB\CDR_Reports"
         wms_reports_dir = r"C:\Users\DeepakSureshNidagund\OneDrive - JA Solar GmbH\Documents - Sales Dashboards (BI Solution)\a_Combinded WM_Report\Outbound_WMS_Report"
         remove_data_path = r"C:\Users\DeepakSureshNidagund\OneDrive - JA Solar GmbH\Logistics Reporting\000_Master_Query_Reports\Automation_DB\RNO_Report\Remove_data(RNO).xlsx"
-        output_path = r"C:\Users\DeepakSureshNidagund\OneDrive - JA Solar GmbH\Logistics Reporting\000_Master_Query_Reports\Automation_DB\RNO_Report\RNO_Report.xlsx"
+        output_path = r"C:\Users\DeepakSureshNidagund\OneDrive - JA Solar GmbH\Logistics Reporting\000_Master_Query_Reports\Automation_DB\RNO_Report\New folder\RNO_Report01.xlsx"
 
         # Load and process data
         print("Loading Europe stock data...")
