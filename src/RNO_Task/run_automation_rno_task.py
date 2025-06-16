@@ -3,11 +3,10 @@ import time
 
 # List of scripts to run
 scripts = [
-    'src/WMS_Task/outbound_report.py',
     'src/RNO_Task/generate_rno_report.py',
-    'src/RNO_Task/Final_rno_report.py',
-    'src/RNO_Task/Sales_rno_report.py',
-    'src/RNO_Task/mail-for-sales-rno-reporting.py'
+    'src/RNO_Task/Final_rno_report.py'
+    # 'src/RNO_Task/Sales_rno_report.py',
+    # 'src/RNO_Task/mail-for-sales-rno-reporting.py'
 ]
 
 for i, script in enumerate(scripts):
