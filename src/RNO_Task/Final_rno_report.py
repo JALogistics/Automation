@@ -43,6 +43,17 @@ def transform_dataframe(df):
         if existing_columns:
             df = df.drop(columns=existing_columns)
             logger.info(f"Dropped the following columns: {existing_columns}")
+        
+
+        # Drop rows where Outbound date is today's date
+        if "Outbound date" in df.columns:
+            initial_rows = len(df)
+            today = datetime.now().date()
+            # Convert Outbound date to datetime if it's not already
+            df["Outbound date"] = pd.to_datetime(df["Outbound date"])
+            df = df[df["Outbound date"].dt.date != today]
+            rows_removed = initial_rows - len(df)
+            logger.info(f"Removed {rows_removed} rows where Outbound date was today's date")
 
         # # Filter out rows where Status Check has specific values or is blank
         # if "Status Check " in df.columns:
