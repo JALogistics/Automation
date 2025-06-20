@@ -39,7 +39,11 @@ def process_excel_file(file_path):
         )
         
         # Add Ref1 column by concatenating Release number and Container number
-        df['Ref1'] = df['Release number'].astype(str) + df['Container number'].astype(str)
+        # Remove .0 from numeric values before concatenation
+        release_str = df['Release number'].astype(str).str.replace('.0', '', regex=False)
+        container_str = df['Container number'].astype(str).str.replace('.0', '', regex=False)
+        df['Ref1'] = release_str + container_str
+        df['Ref1'] = df['Ref1'].astype(str).str.replace('nan', '', regex=False)
         
         return df
     except Exception as e:
