@@ -117,12 +117,12 @@ def save_not_released_data(not_released_df):
         not_released_df = not_released_df[new_column_order]
 
         # Create the target directory if it doesn't exist
-        target_dir = r"C:\Users\DeepakSureshNidagund\OneDrive - JA Solar GmbH\Logistics Reporting\000_Master_Query_Reports\Automation_DB\EU_Stock_Report"
+        target_dir = r"C:\Users\DeepakSureshNidagund\OneDrive - JA Solar GmbH\Logistics Reporting\000_Master_Query_Reports\Automation_DB\Not_Released_Goods"
         os.makedirs(target_dir, exist_ok=True)
 
         # Generate filename with current date
         current_date = datetime.now().strftime("%Y%m%d")
-        filename = f"EU_Stock_Report_{current_date}.xlsx"
+        filename = f"Not_Released_Goods_{current_date}.xlsx"
         file_path = os.path.join(target_dir, filename)
 
         # Save the dataframe to Excel
