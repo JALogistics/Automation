@@ -46,7 +46,28 @@ def get_wms_data():
             return None
     return None
 
-
+def get_wms_stock_data():
+    """
+    Get and process WMS Stock data
+    """
+    wms_stock_folder = r"C:\Users\DeepakSureshNidagund\OneDrive - JA Solar GmbH\Logistics Reporting\000_Master_Query_Reports\Automation_DB\WMS_Stock_Report"
+    wms_stock_file = get_latest_excel_file(wms_stock_folder)
+    
+    if wms_stock_file:
+        print(f"\nReading WMS Stock file: {os.path.basename(wms_stock_file)}")
+        try:
+            # Read WMS stock file
+            wms_stock_df = pd.read_excel(wms_stock_file)
+            
+            # Group by Ref1 and sum Quantity
+            wms_stock_summary = wms_stock_df.groupby('Ref1')['Quantity'].sum().reset_index()
+            wms_stock_summary = wms_stock_summary.rename(columns={'Quantity': 'Stock_Pcs_wms'})
+            
+            return wms_stock_summary
+        except Exception as e:
+            print(f"Error processing WMS Stock file: {str(e)}")
+            return None
+    return None
 
 def process_excel_file(file_path):
     """
@@ -67,6 +88,13 @@ def process_excel_file(file_path):
             # Fill NaN values with 0 for Pcs_wms column
             df['Outbound_Pcs_wms'] = df['Outbound_Pcs_wms'].fillna(0)
         
+        # Get WMS Stock data summary
+        wms_stock_summary = get_wms_stock_data()
+        if wms_stock_summary is not None:
+            # Merge WMS stock quantity with main dataframe
+            df = pd.merge(df, wms_stock_summary, on='Ref1', how='left')
+            df['Stock_Pcs_wms'] = df['Stock_Pcs_wms'].fillna(0)
+        
         # Add Case_1 column comparing Piece with Pcs_wms
         df['Case_1'] = np.where(df['Piece'] == df['Outbound_Pcs_wms'], True, False)
 
@@ -86,7 +114,7 @@ def process_excel_file(file_path):
         
         # Reorder columns to put Ref1 at the beginning and Pcs_wms, Case_1 at the end
         cols = df_transformed.columns.tolist()
-        cols = ['Ref1'] + [col for col in cols if col not in ['Ref1', 'Outbound_Pcs_wms', 'Case_1']] + ['Outbound_Pcs_wms', 'Case_1']
+        cols = ['Ref1'] + [col for col in cols if col not in ['Ref1', 'Outbound_Pcs_wms', 'Case_1', 'Stock_Pcs_wms']] + ['Outbound_Pcs_wms', 'Stock_Pcs_wms', 'Case_1']
         df_transformed = df_transformed[cols]
 
         # Define output directory and create if it doesn't exist
