@@ -121,8 +121,8 @@ def save_not_released_data(not_released_df):
         os.makedirs(target_dir, exist_ok=True)
 
         # Generate filename with current date
-        current_date = datetime.now().strftime("%Y%m%d")
-        filename = f"Not_Released_Goods_{current_date}.xlsx"
+        #current_date = datetime.now().strftime("%Y%m%d")
+        filename = f"Not_Released_Goods.xlsx"
         file_path = os.path.join(target_dir, filename)
 
         # Save the dataframe to Excel
