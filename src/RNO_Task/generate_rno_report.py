@@ -75,13 +75,13 @@ def clean_and_prepare_data(df):
         # Remove specified columns
         columns_to_remove = [
             'Factory', 'Related transaction company', 'Related transaction Term', 'Currency', 
-            'Inv No.', 'C2 --> C1 Date', 'Handover Date', 'Contractual Delivery Week',
+            'Inv No.', 'C2 --> C1 Date', 'Handover Date', 'Contractual Delivery Week','Delay (ETA Shift)','Planned Transit Time as  (ETD- ETA)',
             'Country Code', '状态', 'Internal related price', 'Battery type', 'Border Color',
             'Junction box', 'length', 'Voltage', 'Storage duration', 'Sold（Week）', 
             'Storage duration（days）', 'original WH', 'Warehouse after transfer', 'ETD month',
             'Sold month', 'outbound quantity', 'Rest quantity', 'Released on the sea',
             'Booking No.', 'EWX Week', 'Type.2', 'Auxiliary column', 'Inv&type', '是否签收',
-            '型号', 'LRF', 'Unnamed: 66', 'Unnamed: 67', 'Unnamed: 68', 'Unnamed: 69','Unnamed: 70', 'Unnamed: 71'
+            '型号', 'LRF', 'Unnamed: 66', 'Unnamed: 67', 'Unnamed: 68', 'Unnamed: 69','Unnamed: 70', 'Unnamed: 71','Unnamed: 72'
         ]
         df = df.drop(columns=columns_to_remove, errors='ignore')
 
