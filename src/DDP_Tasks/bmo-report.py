@@ -126,24 +126,25 @@ def generate_bmo_logistics_report():
         if push_data:
             summary.update(push_data)
             # Add Accumlate & Planned Outbound and Gap Target
-            accumulated_outbound_mtd = summary.get('accumulated_outbound_mtd', 0)
-            outbound_planned_this_month = summary.get('Outbound Planned', 0)
-            target_of_month = summary.get('target_of_month', 0)
-            accum_and_planned = round(accumulated_outbound_mtd + outbound_planned_this_month, 2)
-            gap_target = round(target_of_month - accum_and_planned, 2)
+            accumulated_outbound_mtd = summary.get('Accumulated_Outbound_MTD', 0)
+            outbound_planned_this_month = summary.get('Outbound_Planned', 0)
+            target_of_month = summary.get('Month_Target', 0)
+            accum_and_planned = round(float(accumulated_outbound_mtd) + float(outbound_planned_this_month), 2)
+            gap_target = round(float(target_of_month) - accum_and_planned, 2)
             if gap_target < 0:
                 gap_target = abs(gap_target)
-            summary['Accumlate & Planned Outbound'] = accum_and_planned
-            summary['Gap Target'] = gap_target
+            summary['Accumlate_&_Planned_Outbound'] = accum_and_planned
+            summary['Gap_Target'] = gap_target
             # Add Vs Target Outbound (%) and Vs Target Outbound Planned (%)
-            vs_target_outbound = round((accumulated_outbound_mtd / target_of_month) * 100, 2) if target_of_month else 0.0
-            vs_target_outbound_planned = round((accum_and_planned / target_of_month) * 100, 2) if target_of_month else 0.0
-            summary['Vs Target Outbound (%)'] = f"{vs_target_outbound}%"
-            summary['Vs Target Outbound Planned (%)'] = f"{vs_target_outbound_planned}%"
+            vs_target_outbound = round((float(accumulated_outbound_mtd) / float(target_of_month)) * 100, 2) if float(target_of_month) else 0.0
+            vs_target_outbound_planned = round((accum_and_planned / float(target_of_month)) * 100, 2) if float(target_of_month) else 0.0
+            summary['Vs_Target_Outbound_(%)'] = f"{vs_target_outbound}%"
+            summary['Vs_Target_Outbound_Planned_(%)'] = f"{vs_target_outbound_planned}%"
+        # Convert all summary values to string
+        summary = {k: str(v) for k, v in summary.items()}
         print("\nBMO Summary:")
         for k, v in summary.items():
             print(f"{k}: {v}")
-        
         # Save summary to a new sheet in the same Excel file (as rows, not columns)
         summary_df = pd.DataFrame(list(summary.items()), columns=["JA Solar Logistics Report", "Mwps"])
         with pd.ExcelWriter(output_file, engine='openpyxl', mode='a', if_sheet_exists='replace') as writer:
@@ -182,12 +183,12 @@ def generate_bmo_summary(df: pd.DataFrame, today: date = None) -> dict:
     outbound_needed_to_achieve_target = round(target_of_month - accumulated_outbound_mtd, 2)
 
     return {
-        "target_of_month": target_of_month,
-        "total_working_days": total_working_days,
-        "working_days_till_today": working_days_till_today,
-        "outbound_today": outbound_today,
-        "accumulated_outbound_mtd": accumulated_outbound_mtd,
-        "outbound_needed_to_achieve_target": outbound_needed_to_achieve_target,
+        "Month_Target": target_of_month,
+        "Total_Working_Days": total_working_days,
+        "Working_Days_Till_Today": working_days_till_today,
+        "Outbound_Today": outbound_today,
+        "Accumulated_Outbound_MTD": accumulated_outbound_mtd,
+        "Outbound_Needed_To_Achieve_Target": outbound_needed_to_achieve_target,
         
     }
 
@@ -213,7 +214,7 @@ def get_sales_and_logistics_to_push():
     return {
         'Sales to Push': round(sales_to_push, 2),
         'Logistics to Push': round(logistics_to_push, 2),
-        'Outbound Planned': round(outbound_planned_this_month, 2)
+        'Outbound_Planned': round(outbound_planned_this_month, 2)
     }
 
 if __name__ == "__main__":

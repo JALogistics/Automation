@@ -5,6 +5,7 @@ import win32com.client as win32
 from typing import List, Optional, Dict, Any
 from loguru import logger
 from glob import glob
+import pandas as pd
 
 def send_bmo_report_email(
     sender_email: str = "Logistics_Reporting@jasolar.eu",
@@ -69,26 +70,21 @@ def send_bmo_report_email(
         current_date = datetime.datetime.now().strftime("%d.%m.%Y")
         mail.Subject = f"JA Solar GmbH - Logistics Outbound Report {current_date}"
         
-        # Set email body
+        # Set email body (no summary table)
         if custom_body:
             mail.HTMLBody = custom_body
         else:
             mail.HTMLBody = f"""
             <html>
-            <body style="font-family: Calibri, Arial, sans-serif; font-size: 11pt;">
+            <body style=\"font-family: Calibri, Arial, sans-serif; font-size: 11pt;\">
                 <p>Dear Team,</p>
-                
                 <p>Please find attached the Logistics Outbound report dated {current_date}.</p>
-                
                 <p>The report contains the latest data from our system with key metrics and relevant information for your review.</p>
-                
                 <p>If you have any questions or need further information, please don't hesitate to contact us.</p>
-                
-                <p style="margin-top: 20px;">Best regards,<br>
+                <p style=\"margin-top: 20px;\">Best regards,<br>
                 Logistics Reporting Team<br>
                 JA Solar GmbH</p>
-                
-                <p style="color: #666666; font-size: 9pt; margin-top: 30px;">
+                <p style=\"color: #666666; font-size: 9pt; margin-top: 30px;\">
                 <em>This is an automated email sent from {sender_email}</em>
                 </p>
             </body>
