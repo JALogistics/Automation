@@ -55,6 +55,7 @@ def transform_dataframe(df):
             rows_removed = initial_rows - len(df)
             logger.info(f"Removed {rows_removed} rows where Outbound date was today's date")
 
+
         # # Filter out rows where Status Check has specific values or is blank
         # if "Status Check " in df.columns:
         #     initial_rows = len(df)

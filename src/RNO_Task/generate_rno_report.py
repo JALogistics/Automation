@@ -75,7 +75,7 @@ def clean_and_prepare_data(df):
         # Remove specified columns
         columns_to_remove = [
             'Factory', 'Related transaction company', 'Related transaction Term', 'Currency', 
-            'Inv No.', 'C2 --> C1 Date', 'Handover Date', 'Contractual Delivery Week','Delay (ETA Shift)','Planned Transit Time as  (ETD- ETA)',
+            'Inv No.', 'C2 --> C1 Date', 'Handover Date', 'Contractual Delivery Week','Delay (ETA Shift)','Planned Transit Time as  (ETD- ETA)','Planned Transit Time as  (ETD/ ETA)',
             'Country Code', '状态', 'Internal related price', 'Battery type', 'Border Color',
             'Junction box', 'length', 'Voltage', 'Storage duration', 'Sold（Week）', 
             'Storage duration（days）', 'original WH', 'Warehouse after transfer', 'ETD month',
@@ -397,10 +397,20 @@ def save_to_excel(rno, output_path):
         rno = rno[first_columns + other_columns]
 
         # Convert date columns
-        date_columns = ['Sold Date', 'Outbound date', 'Agreed Delivery date', 'Delivery date']
+        date_columns = ['Sold Date', 'Outbound date', 'Agreed Delivery date', 'Delivery date','ATA','EXW','ETA','ETD','update ETD','update ETA','Date inbound']
         for col in date_columns:
             if col in rno.columns:
-                rno[col] = pd.to_datetime(rno[col])
+                rno[col] = pd.to_datetime(rno[col]).dt.date
+        
+        # Replace '1999-12-31' with blank in specific columns
+        for col in ['Agreed Delivery date', 'Delivery date']:
+            if col in rno.columns:
+                rno[col] = rno[col].replace(pd.to_datetime('1999-12-31').date(), '')
+
+        # Ensure specific columns are whole numbers (integers)
+        for col in ['On_Sea_Pcs', 'In_Stock_Pcs', 'Outbound_Comparison']:
+            if col in rno.columns:
+                rno[col] = pd.to_numeric(rno[col], errors='coerce').fillna(0).astype(int)
 
         # Save to Excel
         if os.path.exists(output_path):
