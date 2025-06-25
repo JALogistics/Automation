@@ -6,8 +6,8 @@ scripts = [
     'src/DDP_Tasks/daily-data-transfer.py',
     'src/DDP_Tasks/create-consolidated-report.py',
     'src/DDP_Tasks/logistics-report.py',
-    'src/DDP_Tasks/bmo-report.py',
-    'src/DDP_Tasks/mail-for-bmo-reporting.py',
+    # 'src/DDP_Tasks/bmo-report.py',
+    # 'src/DDP_Tasks/mail-for-bmo-reporting.py',
     'src/DDP_Tasks/mail-for-logisitcs-reporting.py'
 ]
 

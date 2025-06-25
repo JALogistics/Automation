@@ -46,6 +46,11 @@ def generate_bmo_logistics_report():
         # Create a copy for BMO report processing
         bmo_df = df.copy()
         
+        # Ensure outbound date columns are always dt.date for consistency
+        for col in ['Outbound Dates', 'Outbound date']:
+            if col in bmo_df.columns:
+                bmo_df[col] = pd.to_datetime(bmo_df[col], errors='coerce').dt.date
+        
         # Process MTD data
         def filter_mtd_data(df):
             if 'Outbound Dates' in df.columns:
@@ -64,7 +69,7 @@ def generate_bmo_logistics_report():
                 df[column_name] = pd.to_datetime(df[column_name], errors='coerce')
             
             current_date = datetime.now()
-            start_date = datetime(current_date.year, current_date.month, 1)  # First day of current month
+            start_date = pd.to_datetime(current_date.replace(day=1))  # First day of current month
             
             mtd_df = df[
                 (df[column_name] >= start_date) & 
@@ -113,11 +118,103 @@ def generate_bmo_logistics_report():
             mtd_df.to_excel(writer, sheet_name='BMO Report MTD', index=False)
         
         print(f"BMO report saved to: {output_file}")
+        
+        # Generate and display summary
+        summary = generate_bmo_summary(mtd_df)
+        # Add Sales/Logistics to Push to summary
+        push_data = get_sales_and_logistics_to_push()
+        if push_data:
+            summary.update(push_data)
+            # Add Accumlate & Planned Outbound and Gap Target
+            accumulated_outbound_mtd = summary.get('accumulated_outbound_mtd', 0)
+            outbound_planned_this_month = summary.get('Outbound Planned', 0)
+            target_of_month = summary.get('target_of_month', 0)
+            accum_and_planned = round(accumulated_outbound_mtd + outbound_planned_this_month, 2)
+            gap_target = round(target_of_month - accum_and_planned, 2)
+            if gap_target < 0:
+                gap_target = abs(gap_target)
+            summary['Accumlate & Planned Outbound'] = accum_and_planned
+            summary['Gap Target'] = gap_target
+            # Add Vs Target Outbound (%) and Vs Target Outbound Planned (%)
+            vs_target_outbound = round((accumulated_outbound_mtd / target_of_month) * 100, 2) if target_of_month else 0.0
+            vs_target_outbound_planned = round((accum_and_planned / target_of_month) * 100, 2) if target_of_month else 0.0
+            summary['Vs Target Outbound (%)'] = f"{vs_target_outbound}%"
+            summary['Vs Target Outbound Planned (%)'] = f"{vs_target_outbound_planned}%"
+        print("\nBMO Summary:")
+        for k, v in summary.items():
+            print(f"{k}: {v}")
+        
+        # Save summary to a new sheet in the same Excel file (as rows, not columns)
+        summary_df = pd.DataFrame(list(summary.items()), columns=["JA Solar Logistics Report", "Mwps"])
+        with pd.ExcelWriter(output_file, engine='openpyxl', mode='a', if_sheet_exists='replace') as writer:
+            summary_df.to_excel(writer, sheet_name='Summary', index=False)
+        print(f"Summary saved to: {output_file} (sheet: 'Summary')")
         return output_file
         
     except Exception as e:
         print(f"Error in BMO report generation: {e}")
         sys.exit(1)
+
+def generate_bmo_summary(df: pd.DataFrame, today: date = None) -> dict:
+    """
+    Generate BMO summary metrics for the report with fixed configuration values.
+    """
+    # Fixed values (edit as needed)
+    target_of_month = 820.0
+    total_working_days = 20
+    working_days_till_today = 16
+
+    if today is None:
+        today = date.today()
+
+    # Ensure 'Outbound date' is datetime
+    df['Outbound date'] = pd.to_datetime(df['Outbound date'], errors='coerce').dt.date
+
+    # Outbound today
+    outbound_today = round(df.loc[df['Outbound date'] == today, 'MegaWattage_numeric'].sum(), 2)
+
+    # Accumulated outbound till today (MTD)
+    start_of_month = today.replace(day=1)
+    mask_mtd = (df['Outbound date'] >= start_of_month) & (df['Outbound date'] <= today)
+    accumulated_outbound_mtd = round(df.loc[mask_mtd, 'MegaWattage_numeric'].sum(), 2)
+
+    # Outbound needed to achieve target
+    outbound_needed_to_achieve_target = round(target_of_month - accumulated_outbound_mtd, 2)
+
+    return {
+        "target_of_month": target_of_month,
+        "total_working_days": total_working_days,
+        "working_days_till_today": working_days_till_today,
+        "outbound_today": outbound_today,
+        "accumulated_outbound_mtd": accumulated_outbound_mtd,
+        "outbound_needed_to_achieve_target": outbound_needed_to_achieve_target,
+        
+    }
+
+def get_sales_and_logistics_to_push():
+    sales_rno_dir = r"C:\Users\DeepakSureshNidagund\OneDrive - JA Solar GmbH\Logistics Reporting\000_Master_Query_Reports\Automation_DB\Sales_RNO_Report"
+    pattern = os.path.join(sales_rno_dir, "*.xlsx")
+    files = glob.glob(pattern)
+    if not files:
+        print(f"No files found in {sales_rno_dir}")
+        return None
+    latest_file = max(files, key=os.path.getmtime)
+    print(f"Latest Sales RNO Report: {latest_file}")
+    df = pd.read_excel(latest_file, sheet_name='Main Data')
+    # Sales to Push: Status Check == B or D
+    sales_to_push = df[df['Status Check '].isin(['B', 'D'])]['Final_MWp'].sum()
+    # Logistics to Push: Status Check == A or C
+    logistics_to_push = df[df['Status Check '].isin(['A', 'C'])]['Final_MWp'].sum()
+    # Outbound Planned for this month 
+    outbound_planned_this_month = df[df['Final_Outbound_Plan'].dt.month == datetime.now().month]['Final_MWp'].sum()
+    print(f"Sales to Push (B & D): {sales_to_push:.2f} MWp")
+    print(f"Logistics to Push (A & C): {logistics_to_push:.2f} MWp")
+    print(f"Outbound Planned: {outbound_planned_this_month:.2f} MWp")
+    return {
+        'Sales to Push': round(sales_to_push, 2),
+        'Logistics to Push': round(logistics_to_push, 2),
+        'Outbound Planned': round(outbound_planned_this_month, 2)
+    }
 
 if __name__ == "__main__":
     generate_bmo_logistics_report() 
