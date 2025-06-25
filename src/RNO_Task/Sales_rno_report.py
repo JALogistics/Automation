@@ -52,6 +52,9 @@ def process_rno_report():
         # Filter out rows where Status Check matches F, H, J, or G
         status_to_remove = ['F', 'H', 'J', 'G']
         df = df[~df['Status Check '].isin(status_to_remove)]
+
+        # Remove rows where Container Number is blank
+        df = df.dropna(subset=['Container Number'])
         
         # Create output directory if it doesn't exist
         os.makedirs(output_dir, exist_ok=True)
@@ -61,11 +64,16 @@ def process_rno_report():
         output_file = os.path.join(output_dir, f"Sales_RNO_Report_{current_date}.xlsx")
         
         # Create summary statistics
-        # 1. Summary by Current_Status
-        status_summary = df.groupby('Status Check ').agg({
-            'Final_Pcs': 'sum',
-            'Final_MWp': 'sum'
-        }).round(2)
+        # 1. Summary by Current_Status and Region info (Matrix format)
+        status_summary = df.pivot_table(
+            values='Final_MWp',
+            index='Status Check ',
+            columns='Region info',
+            aggfunc='sum',
+            fill_value=0,
+            margins=True,
+            margins_name='Grand Total'
+        ).round(2)
         
         # Add grand total to status summary
         status_summary.loc['Grand Total'] = status_summary.sum()
@@ -111,9 +119,9 @@ def process_rno_report():
         
         print(f"File successfully saved as: {output_file}")
         print("\nSummary Statistics:")
-        print("\n1. Summary by Status Check:")
+        print("\n1. Summary by Status and Regions:")
         print(status_summary)
-        print("\n2. Monthly Summary (Status Check = 'E'):")
+        print("\n2. Monthly Summary (Status  = 'E'):")
         print(monthly_summary)
         print("\n4. Status Location Matrix:")
         print(status_location_summary)

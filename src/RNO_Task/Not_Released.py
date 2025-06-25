@@ -78,7 +78,7 @@ def clean_and_prepare_data(df):
         # Remove specified columns
         columns_to_remove = [
             'Factory', 'Related transaction company', 'Related transaction Term', 'Currency', 
-            'Inv No.', 'C2 --> C1 Date', 'Handover Date', 'Contractual Delivery Week', 'Delay (ETA Shift)','Planned Transit Time as  (ETD- ETA)',
+            'Inv No.', 'C2 --> C1 Date', 'Handover Date', 'Contractual Delivery Week', 'Delay (ETA Shift)','Planned Transit Time as  (ETD- ETA)','Planned Transit Time as  (ETD/ ETA)',
             'Country Code', '状态', 'Internal related price', 'Battery type', 'Border Color',
             'Junction box', 'length', 'Voltage', 'Storage duration', 'Sold（Week）', 
             'Storage duration（days）', 'original WH', 'Warehouse after transfer', 'ETD month',
