@@ -118,6 +118,7 @@ def generate_project_reports():
             filtered = filtered[final_columns]
             output_path = os.path.join(output_dir, f"{ref1}.xlsx")
             filtered.to_excel(output_path, index=False)
+            print(f"Generated file: {output_path}")
             # Format only specific header columns: bold and yellow fill
             highlight_columns = [
                 "Inbound_Date",
