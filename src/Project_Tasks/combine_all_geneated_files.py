@@ -15,7 +15,9 @@ highlight_columns = [
     "Actual_Delivery Date",
     "POD sent (Y/N)",
     "Container_Returned",
-    "Damgage Container Status"
+    "Damgage Container Status",
+    "ETD (UPDATE)",
+    "ETA (UPDATE)"
 ]
 
 # Group files by first 16 characters

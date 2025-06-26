@@ -59,7 +59,11 @@ def generate_project_reports():
                 "Destination Port",
                 "Departure Date ( From Port)",
                 "Transport Mode",
-                "Remark"
+                "Remark",
+                "ETD",
+                "ETA",
+                "ETD (UPDATE)",
+                "ETA (UPDATE)",
             ]
             filtered = matched[[col for col in keep_columns if col in matched.columns]]
             # Map and rename columns for the final report
@@ -79,6 +83,10 @@ def generate_project_reports():
                 "MW": "megawatt",
                 "Sea_Freight_Agent": "Sea Freight Agent",
                 "B/L_no": "BL no.",
+                "ETD": "ETD",
+                "ETA": "ETA",
+                "ETD (UPDATE)": "ETD (UPDATE)",
+                "ETA (UPDATE)": "ETA (UPDATE)",
                 "Destination_Country": "Destination Country",
                 "Destination_Port": "Destination Port",
                 "Terminal Storage free days": "Terminal Storage free days",
