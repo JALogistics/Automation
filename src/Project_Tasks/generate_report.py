@@ -18,8 +18,8 @@ def generate_project_reports():
     # Deduplicate based on Internal_Invoice (or entire row if needed)
     file1_df = file1_df.drop_duplicates(subset=["Internal_Invoice"])
 
-    # Filter rows where Status is empty or null
-    pending_df = file1_df[file1_df["Status"].isnull() | (file1_df["Status"] == "")]
+    # Filter rows where File generated Status is empty or null
+    pending_df = file1_df[file1_df["File generated Status"].isnull() | (file1_df["File generated Status"] == "")]
 
     # Find the latest file2.xlsx in the directory
     file2_files = [f for f in os.listdir(file2_dir) if f.lower().endswith('.xlsx')]
