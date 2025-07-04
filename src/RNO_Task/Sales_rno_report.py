@@ -75,7 +75,9 @@ def process_rno_report():
             margins_name='Grand Total'
         ).round(2)
         
-        # Add grand total to status summary
+        # Remove the duplicate grand total calculation
+        status_summary = status_summary.iloc[:-1]  # Remove the last row (old grand total)
+        # Calculate correct grand total
         status_summary.loc['Grand Total'] = status_summary.sum()
         
         # 2. Total Final_MWp by Outbound_Month where Current_Status is 'E'

@@ -161,7 +161,7 @@ def generate_bmo_summary(df: pd.DataFrame, today: date = None) -> dict:
     Generate BMO summary metrics for the report with fixed configuration values.
     """
     # Fixed values (edit as needed)
-    target_of_month = 720.0
+    target_of_month = 900.0
     total_working_days = 20
     working_days_till_today = 1
 
