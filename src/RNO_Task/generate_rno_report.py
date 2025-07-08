@@ -199,6 +199,16 @@ def process_rno_data(Released_data, cdr):
         # Merge with Released data
         rno = pd.merge(Released_data, cdr_selected, on="Ref1", how="left")
 
+        # Drop rows where Outbound date is today's date
+        if "Outbound date" in rno.columns:
+            initial_rows = len(rno)
+            today = datetime.now().date()
+            # Convert Outbound date to datetime with flexible format parsing
+            rno["Outbound date"] = pd.to_datetime(rno["Outbound date"], format='mixed', dayfirst=True)
+            rno = rno[rno["Outbound date"].dt.date != today]
+            rows_removed = initial_rows - len(rno)
+            print(f"Removed {rows_removed} rows with today's Outbound date")
+
         # Process CDR quantities
         cdr['Piece'] = pd.to_numeric(cdr['Piece'], errors='coerce')
 
