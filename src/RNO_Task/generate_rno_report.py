@@ -199,6 +199,9 @@ def process_rno_data(Released_data, cdr):
         # Merge with Released data
         rno = pd.merge(Released_data, cdr_selected, on="Ref1", how="left")
 
+        # Remove duplicates in Ref1 column, keeping the last occurrence
+        rno = rno.drop_duplicates(subset=['Ref1'], keep='last')
+
         # Drop rows where Outbound date is today's date
         if "Outbound date" in rno.columns:
             initial_rows = len(rno)
