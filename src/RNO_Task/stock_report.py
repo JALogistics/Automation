@@ -1,6 +1,22 @@
 import pandas as pd
 import os
 from datetime import datetime
+import glob
+
+def get_latest_sales_rno_report():
+    """
+    Get the latest Sales RNO Report file from the specified directory
+    """
+    folder_path = r"C:\Users\DeepakSureshNidagund\OneDrive - JA Solar GmbH\Logistics Reporting\000_Master_Query_Reports\Automation_DB\Sales_RNO_Report"
+    pattern = os.path.join(folder_path, "Sales_RNO_Report_*.xlsx")
+    files = glob.glob(pattern)
+    
+    if not files:
+        raise FileNotFoundError(f"No Sales RNO Report files found in {folder_path}")
+    
+    # Get the latest file based on filename (which contains the date)
+    latest_file = max(files)
+    return latest_file
 
 def read_template_headers(template_path):
     """
@@ -13,12 +29,12 @@ def read_template_headers(template_path):
     except Exception as e:
         raise
 
-def read_source_data(source_path, headers):
+def read_source_data(source_path, headers, sheet_name='Sheet1'):
     """
     Read source data and filter columns based on template headers
     """
     try:
-        source_df = pd.read_excel(source_path, sheet_name=0)
+        source_df = pd.read_excel(source_path, sheet_name=sheet_name)
         
         # Find matching columns between source and template headers
         matching_columns = []
@@ -45,7 +61,7 @@ def append_data_to_template(template_path, source1_path, source2_path, output_pa
         template_headers = read_template_headers(template_path)
         
         # Read source data
-        source1_data = read_source_data(source1_path, template_headers)
+        source1_data = read_source_data(source1_path, template_headers, sheet_name='Main Data')
         source2_data = read_source_data(source2_path, template_headers)
         
         # Combine data from both sources
@@ -118,7 +134,11 @@ def main():
     """
     # File paths
     template_path = r"C:\Users\DeepakSureshNidagund\OneDrive - JA Solar GmbH\Logistics Reporting\000_Master_Query_Reports\Automation_DB\EU_Stock_report\Temp_file\Templete.xlsx"
-    source1_path = r"C:\Users\DeepakSureshNidagund\OneDrive - JA Solar GmbH\Logistics Reporting\000_Master_Query_Reports\Automation_DB\RNO_Report\Final_RNO_Report.xlsx"
+    try:
+        source1_path = get_latest_sales_rno_report()
+    except FileNotFoundError as e:
+        print(f"\n❌ Error: {e}")
+        return
     source2_path = r"C:\Users\DeepakSureshNidagund\OneDrive - JA Solar GmbH\Logistics Reporting\000_Master_Query_Reports\Automation_DB\Not_Released_Goods\Not_Released_Goods.xlsx"
     
     # Generate output path with timestamp
