@@ -157,7 +157,7 @@ def main():
         
         if success:
             print(f"\n✅ Stock report generated successfully!")
-            print(f"sales rno report: {(source1_path)}")
+            print(f"📁 Sales rno report: {(source1_path)}")
             print(f"📁 Output file: {output_path}")
         else:
             print("\n❌ Stock report generation failed")
