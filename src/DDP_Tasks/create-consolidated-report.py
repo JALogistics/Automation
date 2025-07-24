@@ -96,10 +96,12 @@ def create_consolidated_report():
         current_date = datetime.now().strftime("%Y-%m-%d")
         output_dir1 = r"C:\Users\DeepakSureshNidagund\Downloads\Reporting Application\Automation\automation\tests"
         output_dir2 = r"C:\Users\DeepakSureshNidagund\OneDrive - JA Solar GmbH\Logistics Reporting\000_Master_Query_Reports\Automation_DB\CDR_Reports"
+        output_dir3 = r"C:\Users\DeepakSureshNidagund\JA Solar GmbH\Power BI Setup - PowerBISetup\CDR"
 
         # Save to both locations
         save_to_csv(combined_df, output_dir1, "CDR.csv")
         save_to_csv(combined_df, output_dir2, f"CDR_{current_date}.csv")
+        save_to_csv(combined_df, output_dir3, f"CDR_{current_date}.csv")
 
         # Prepare data for Supabase
         combined_df = combined_df.where(pd.notnull(combined_df), None)

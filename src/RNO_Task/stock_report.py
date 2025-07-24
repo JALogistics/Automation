@@ -144,8 +144,9 @@ def main():
     # Generate output path with timestamp
     timestamp = datetime.now().strftime("%Y%m%d")
     output_dir = r"C:\Users\DeepakSureshNidagund\OneDrive - JA Solar GmbH\Logistics Reporting\000_Master_Query_Reports\Automation_DB\EU_Stock_report"
+    output_dir2 = r"C:\Users\DeepakSureshNidagund\JA Solar GmbH\Power BI Setup - PowerBISetup\EU_Stock_report"
     output_path = os.path.join(output_dir, f"Stock_Report_{timestamp}.xlsx")
-    
+    output_path2 = os.path.join(output_dir2, f"Stock_Report_{timestamp}.xlsx")
     try:
         # Validate input files exist
         for file_path, file_name in [(template_path, "Template"), (source1_path, "Source 1"), (source2_path, "Source 2")]:
