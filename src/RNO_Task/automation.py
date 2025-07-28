@@ -4,7 +4,8 @@ import time
 # List of scripts to run
 scripts = [
     'src/RNO_Task/Not_Released.py',
-    'src/RNO_Task/stock_report.py'
+    'src/RNO_Task/stock_report.py',
+    'src/DDP_Tasks/wh-stock.py'
 ]
 
 for i, script in enumerate(scripts):
