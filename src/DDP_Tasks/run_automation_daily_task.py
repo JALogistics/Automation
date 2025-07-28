@@ -8,7 +8,8 @@ scripts = [
     'src/DDP_Tasks/logistics-report.py',
     # 'src/DDP_Tasks/bmo-report.py',
     # 'src/DDP_Tasks/mail-for-bmo-reporting.py',
-    'src/DDP_Tasks/mail-for-logisitcs-reporting.py'
+    'src/DDP_Tasks/mail-for-logisitcs-reporting.py',
+    'src/DDP_Tasks/wh-stock.py'
 ]
 
 for i, script in enumerate(scripts):
