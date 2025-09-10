@@ -68,13 +68,21 @@ def generate_bmo_logistics_report():
             if not pd.api.types.is_datetime64_any_dtype(df[column_name]):
                 df[column_name] = pd.to_datetime(df[column_name], errors='coerce')
             
-            current_date = datetime.now()
-            start_date = pd.to_datetime(current_date.replace(day=1))  # First day of current month
+            current_date = datetime.now().date()
+            start_date = current_date.replace(day=1)  # First day of current month
+            
+            # Convert dates to date objects (removing time component)
+            df[column_name] = pd.to_datetime(df[column_name]).dt.date
             
             mtd_df = df[
                 (df[column_name] >= start_date) & 
                 (df[column_name] <= current_date)
             ].copy()
+            
+            # Add debug information
+            print(f"\nDebug: First day data check:")
+            first_day_data = df[df[column_name] == start_date]
+            print(f"Records for {start_date}: {len(first_day_data)}")
             
             print(f"\nMTD Filter Details:")
             print(f"- Date column used: {column_name}")
@@ -89,11 +97,13 @@ def generate_bmo_logistics_report():
                 print(f"- Total MTD MegaWattage: {total_mw_mtd:.2f} MW")
             else:
                 print("Warning: MegaWattage_numeric column not found in MTD data")
-            
+
             return mtd_df
         
         # Filter data for MTD report only
         mtd_df = filter_mtd_data(bmo_df)
+
+        
         
         # Remove specified columns if they exist
         columns_to_remove = [
@@ -168,16 +178,26 @@ def generate_bmo_summary(df: pd.DataFrame, today: date = None) -> dict:
     if today is None:
         today = date.today()
 
-    # Ensure 'Outbound date' is datetime
+    # Ensure 'Outbound date' is date type (not datetime)
     df['Outbound date'] = pd.to_datetime(df['Outbound date'], errors='coerce').dt.date
 
+    # Get start of month and ensure it's a date object
+    start_of_month = today.replace(day=1)
+
+    # Debug information
+    print(f"\nDebug BMO Summary dates:")
+    print(f"Start of month: {start_of_month}")
+    print(f"Today: {today}")
+    
     # Outbound today
     outbound_today = round(df.loc[df['Outbound date'] == today, 'MegaWattage_numeric'].sum(), 2)
+    print(f"Records for today ({today}): {len(df[df['Outbound date'] == today])}")
 
     # Accumulated outbound till today (MTD)
-    start_of_month = today.replace(day=1)
     mask_mtd = (df['Outbound date'] >= start_of_month) & (df['Outbound date'] <= today)
     accumulated_outbound_mtd = round(df.loc[mask_mtd, 'MegaWattage_numeric'].sum(), 2)
+    print(f"Records for first day ({start_of_month}): {len(df[df['Outbound date'] == start_of_month])}")
+    print(f"Total MTD records: {len(df[mask_mtd])}")
 
     # Outbound needed to achieve target
     outbound_needed_to_achieve_target = round(target_of_month - accumulated_outbound_mtd, 2)
