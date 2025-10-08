@@ -9,7 +9,7 @@ import pandas as pd
 
 def send_bmo_report_email(
     sender_email: str = "Logistics_Reporting@jasolar.eu",
-    recipients: List[str] = ["Logistics_Reporting@jasolar.eu", "Muhammadanus@jasolar.eu"],
+    recipients: List[str] = ["Logistics_Reporting@jasolar.eu", "Muhammadanus@jasolar.eu","leizhang@jasolar.eu"],
     cc_recipients: Optional[List[str]] = ["Logistics_Reporting@jasolar.eu"],
     bcc_recipients: Optional[List[str]] = None,
     report_directory: str = r"C:\Users\DeepakSureshNidagund\OneDrive - JA Solar GmbH\Logistics Reporting\000_Master_Query_Reports\Automation_DB\BMO_Reports",

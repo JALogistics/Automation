@@ -116,7 +116,7 @@ if __name__ == "__main__":
     logger.add("email_sender.log", rotation="10 MB")
     
     # Test sending a sample email
-    sample_recipients = ["Logistics_Reporting@jasolar.eu", "Muhammadanus@jasolar.eu"]
+    sample_recipients = ["Logistics_Reporting@jasolar.eu", "Muhammadanus@jasolar.eu","leizhang@jasolar.eu"]
     sample_cc = ["Logistics_Reporting@jasolar.eu"]
     
     # Find the latest Excel file in the BMO_Reports directory
