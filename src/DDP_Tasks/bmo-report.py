@@ -42,7 +42,17 @@ def generate_bmo_logistics_report():
         except Exception as e:
             print(f"Error reading Outbound_logistics_report sheet: {e}")
             sys.exit(1)
-            
+        
+        if 'Delivery date' in df.columns:
+                # Create a copy to avoid modifying original data
+                df_copy = df.copy()
+                
+                # Fill empty Delivery date with Agreed Delivery date, then with Outbound date
+                df_copy['Delivery date'] = df_copy['Delivery date'].fillna(df_copy.get('Agreed Delivery date', pd.Series()))
+                df_copy['Delivery date'] = df_copy['Delivery date'].fillna(df_copy.get('Outbound date', pd.Series()))
+                df_copy['Delivery date'] = df_copy['Delivery date'].fillna(df_copy.get('Outbound Dates', pd.Series()))
+                df = df_copy    
+                
         # Create a copy for BMO report processing
         bmo_df = df.copy()
         
