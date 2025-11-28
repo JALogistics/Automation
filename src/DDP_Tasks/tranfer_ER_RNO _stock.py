@@ -1,6 +1,6 @@
 """
 Script to transfer latest RNO and EU Stock reports
-- Transfers latest Sales_RNO_Report as CSV
+- Transfers latest Sales_RNO_Report as XLSX
 - Transfers latest EU_Stock_Report to destination folder
 """
 
@@ -37,7 +37,7 @@ def get_latest_file(folder_path, pattern="*"):
 
 def transfer_rno_report():
     """
-    Transfer the latest Sales_RNO_Report as CSV
+    Transfer the latest Sales_RNO_Report as XLSX
     """
     print("\n" + "="*60)
     print("Processing Sales RNO Report")
@@ -45,7 +45,7 @@ def transfer_rno_report():
     
     source_folder = r"C:\Users\DeepakSureshNidagund\OneDrive - JA Solar GmbH\Logistics Reporting\000_Master_Query_Reports\Automation_DB\Sales_RNO_Report"
     dest_folder = r"C:\Users\DeepakSureshNidagund\JA Solar GmbH\Power BI Setup - PowerBISetup"
-    dest_filename = "Latest_RNO_report.csv"
+    dest_filename = "Latest_RNO_report.xlsx"
     
     # Ensure destination folder exists
     os.makedirs(dest_folder, exist_ok=True)
@@ -62,17 +62,18 @@ def transfer_rno_report():
     print(f"Last modified: {datetime.fromtimestamp(os.path.getmtime(latest_file))}")
     
     try:
-        # Read the Excel file
-        print("Reading Excel file...")
-        df = pd.read_excel(latest_file)
-        
-        # Save as CSV
+        # Copy the file
         dest_path = os.path.join(dest_folder, dest_filename)
-        print(f"Saving as CSV to: {dest_path}")
-        df.to_csv(dest_path, index=False, encoding='utf-8-sig')
+        
+        # Check if file already exists
+        if os.path.exists(dest_path):
+            print(f"Existing file found - will be replaced")
+            print(f"  Old file modified: {datetime.fromtimestamp(os.path.getmtime(dest_path))}")
+        
+        print(f"Copying to: {dest_path}")
+        shutil.copy2(latest_file, dest_path)
         
         print(f"✓ Successfully transferred RNO report")
-        print(f"  Rows: {len(df)}, Columns: {len(df.columns)}")
         return True
         
     except Exception as e:
@@ -109,6 +110,11 @@ def transfer_eu_stock_report():
         # Get the filename and destination path
         filename = os.path.basename(latest_file)
         dest_path = os.path.join(dest_folder, filename)
+        
+        # Check if file already exists
+        if os.path.exists(dest_path):
+            print(f"Existing file found - will be replaced")
+            print(f"  Old file modified: {datetime.fromtimestamp(os.path.getmtime(dest_path))}")
         
         # Copy the file
         print(f"Copying to: {dest_path}")
