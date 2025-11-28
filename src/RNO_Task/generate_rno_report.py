@@ -409,11 +409,30 @@ def save_to_excel(rno, output_path):
         other_columns = [col for col in rno.columns if col not in first_columns]
         rno = rno[first_columns + other_columns]
 
-        # Convert date columns
+        # Convert date columns with proper handling of time objects
         date_columns = ['Sold Date', 'Outbound date', 'Agreed Delivery date', 'Delivery date','ATA','EXW','ETA','ETD','update ETD','update ETA','Date inbound']
         for col in date_columns:
             if col in rno.columns:
-                rno[col] = pd.to_datetime(rno[col]).dt.date
+                # Handle different data types that might be in the column
+                def safe_convert_to_date(val):
+                    if pd.isna(val) or val is None or val == '':
+                        return None
+                    try:
+                        # If it's already a date object, return it
+                        if hasattr(val, 'date') and callable(val.date):
+                            return val.date()
+                        # If it's a datetime.date object, return it as is
+                        if type(val).__name__ == 'date':
+                            return val
+                        # If it's a time object, return None (can't convert time to date)
+                        if type(val).__name__ == 'time':
+                            return None
+                        # Otherwise try to convert to datetime
+                        return pd.to_datetime(val, errors='coerce').date()
+                    except:
+                        return None
+                
+                rno[col] = rno[col].apply(safe_convert_to_date)
         
         # Replace '1999-12-31' with blank in specific columns
         for col in ['Agreed Delivery date', 'Delivery date']:

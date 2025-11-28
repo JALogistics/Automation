@@ -3,7 +3,7 @@ import time
 
 # List of scripts to run
 scripts = [
-    'src/DDP_Task/tranfer_latest_EU and RNO _stock.py',
+    # 'src/DDP_Tasks/tranfer_EU_and_RNO_stock.py',
     'src/DDP_Tasks/wh-stock.py',
     'src/DDP_Tasks/transfer_file.py',
     'src/DDP_Tasks/cdr_stock.py'
