@@ -6,6 +6,46 @@ from supabase import create_client, Client
 from dotenv import load_dotenv
 from datetime import datetime
 
+def convert_date_column(series: pd.Series) -> pd.Series:
+    """
+    Convert date column handling both string dates and Excel serial numbers.
+    
+    Args:
+        series: Pandas Series containing date values
+        
+    Returns:
+        Series with properly formatted date strings (YYYY-MM-DD)
+    """
+    def parse_mixed_date(date_val):
+        if pd.isna(date_val) or date_val is None or date_val == '':
+            return None
+        
+        # If it's already a datetime object, format it
+        if isinstance(date_val, (pd.Timestamp, datetime)):
+            return date_val.strftime('%Y-%m-%d')
+        
+        # If it's a number, treat as Excel serial date
+        if isinstance(date_val, (int, float)):
+            try:
+                # Excel's epoch starts at 1899-12-30
+                converted_date = pd.to_datetime(date_val, origin='1899-12-30', unit='D')
+                return converted_date.strftime('%Y-%m-%d')
+            except:
+                return None
+        
+        # Otherwise, try to parse as string
+        try:
+            parsed_date = pd.to_datetime(date_val, format='mixed', dayfirst=True, errors='coerce')
+            if pd.notna(parsed_date):
+                return parsed_date.strftime('%Y-%m-%d')
+        except:
+            pass
+        
+        return None
+    
+    return series.apply(parse_mixed_date)
+
+
 def fetch_all_data(supabase: Client, table_name: str) -> list:
     """Fetch all data from a table in batches."""
     all_data = []
@@ -91,6 +131,32 @@ def create_consolidated_report():
             return
 
         print(f"Combined data has {len(combined_df)} total rows.")
+        
+        # Transform date columns
+        print("Transforming date columns...")
+        date_columns = [
+            'Outbound date',
+            'Agreed Delivery date',
+            'Delivery date',
+            'ETD date POL',
+            'ATD date POL',
+            'ETA date',
+            'ATA date',
+            'Import date',
+            'Planned Inbound date',
+            'Inbound date',
+            'Release date from port (ATA date)',
+            'Container Returned date',
+            'Release date',
+            'date CMR sent to JASolar'
+        ]
+        
+        for col in date_columns:
+            if col in combined_df.columns:
+                combined_df[col] = convert_date_column(combined_df[col])
+                print(f"Transformed {col}")
+        
+        print("Date transformation completed.")
 
         # Prepare output paths
         current_date = datetime.now().strftime("%Y-%m-%d")

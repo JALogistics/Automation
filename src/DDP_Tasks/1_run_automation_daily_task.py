@@ -3,6 +3,7 @@ import time
 
 # List of scripts to run
 scripts = [
+    # 'src/DDP_Tasks/create_consolidated_report.py',
     'src/DDP_Tasks/daily-data-transfer.py',
     'src/DDP_Tasks/create-consolidated-report.py',
     'src/DDP_Tasks/logistics-report.py',

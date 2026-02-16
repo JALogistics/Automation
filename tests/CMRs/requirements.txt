@@ -1,0 +1,10 @@
+# CMR File Validation System - Requirements
+# Python 3.8+
+
+# Data manipulation and analysis
+pandas>=2.0.0
+
+# Excel file support
+openpyxl>=3.1.0
+
+# Note: pathlib, os, logging, datetime, and typing are part of Python standard library
